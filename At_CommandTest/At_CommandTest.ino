@@ -1,6 +1,7 @@
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 // Configure software serial port
-SoftwareSerial SIM900(7, 8);
+#define SIM900 Serial1
+//SoftwareSerial SIM900(7, 8);
 
 
 String inputString = "";         // a String to hold incoming data
@@ -26,6 +27,7 @@ void loop() {
   processSIM900();
   // print the string when a newline arrives:
   if (stringComplete) {
+    Serial.print(inputString);
     SIM900.print(inputString);
     // clear the string:
     inputString = "";
@@ -73,6 +75,7 @@ void serialEvent() {
     if (inChar == '\n') {
       inputString += '\r';
       stringComplete = true;
+      
     } else {
       // add it to the inputString:
       inputString += inChar;

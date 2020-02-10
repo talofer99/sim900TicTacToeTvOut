@@ -46,9 +46,6 @@ void setup() {
   // start the screen
   screen_setup();
 
-  //setup rtttl
-  rtttl_setup();
-
 
   // Arduino communicates with SIM900 GSM shield at a baud rate of 19200
   // Make sure that corresponds to the baud rate of your module
@@ -56,6 +53,9 @@ void setup() {
   Serial2.begin(115200); // used for the tic-tac-toe communictaion
   // delay to let the hardare wakeup
   delay(2000);
+
+  //setup rtttl
+  rtttl_setup();
 
   // set system state to ZERO
   setSystemState(0);
@@ -293,6 +293,23 @@ void processsim900IncomingMessage() {
     // echo out
     Serial.print(reply);
     Serial2.print(reply);
+    switch (reply) {
+      case '2': //2
+        setChannelOnlyOn(0);
+        break;
+      case '4': //4
+        setChannelOnlyOn(1);
+        break;
+      case '6': //6
+        setChannelOnlyOn(2);
+        break;
+      case '8': //8
+        setChannelOnlyOn(3);
+        break;
+      default:
+        setChannelOnlyOn(4); // do not exists - will clear all
+        break;
+    }
     // 1 = char(49)
     //if (reply >= 49 && reply < 49 + totalChannels) {
     //flipChannelState(reply-49);
@@ -440,6 +457,7 @@ void setSystemState(byte newState) {
       // in case the rtttl is playing
       stop_rtttl();
       printNew("PHONE READY");
+      sendCommand("AT+DDET=1");
       break;
     case 3:
       printNew("INCOMING CALL");
@@ -467,6 +485,3 @@ void setSystemState(byte newState) {
   systemStateStartMillis = millis();
 
 } //end setSystemState
-
-
-
